@@ -1,5 +1,5 @@
 ---
-title: "Driver"
+title: "Driver for Functions 1 to 3"
 author: "Reza Niazi"
 date: "11/26/2020"
 output: html_document
@@ -37,9 +37,3 @@ source("BayesRegress.r")
 formula = quasar$RFEWIDTH~quasar$LINEFLUX+quasar$AB1450
 BayesRegress(formula,quasar)
 ```
-
-```{r,echo=FALSE}
-source("shinyddt.r")
-shinyddt()
-```
-

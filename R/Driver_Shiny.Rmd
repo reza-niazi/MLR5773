@@ -1,0 +1,23 @@
+---
+title: "Driver for Shiny App"
+author: "Reza Niazi"
+date: "12/1/2020"
+output: html_document
+
+vignette: >
+  %\VignetteIndexEntry{Laboratory14}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+source("shinyddt.r")
+shinyddt()
+```
+
