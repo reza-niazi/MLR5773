@@ -1,0 +1,45 @@
+---
+title: "Driver"
+author: "Reza Niazi"
+date: "11/26/2020"
+output: html_document
+
+vignette: >
+  %\VignetteIndexEntry{Laboratory14}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+library(readxl)
+source("ModelCheck.r")
+quasar = read_excel("QUASAR.XLS")
+model = lm(RFEWIDTH~LINEFLUX+AB1450,data=quasar)
+ModelCheck(model)
+```
+
+```{r}
+source("Bootstrap.r")
+Y= as.matrix(quasar[7])
+cols = c(3,5)
+X= cbind(rep(1,nrow(quasar)),as.matrix(quasar[,cols]))
+Bootstrap(100000,.05,X,Y)
+```
+
+```{r}
+source("BayesRegress.r")
+formula = quasar$RFEWIDTH~quasar$LINEFLUX+quasar$AB1450
+BayesRegress(formula,quasar)
+```
+
+```{r,echo=FALSE}
+source("shinyddt.r")
+shinyddt()
+```
+
