@@ -14,8 +14,6 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
-
 ```{r}
 source("shinyddt.r")
 shinyddt()
