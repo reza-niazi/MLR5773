@@ -18,7 +18,7 @@ coeff = coef(model)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("Quasar Dataset: Multile Linear Regression"),
+    titlePanel("Interactive Regression Plane of Quasar Dataset and Coefficient Calculator from File"),
     # Sidebar with a slider input for number of bins
 
 
@@ -88,11 +88,11 @@ server <- function(input, output,session) {
         z <- t(outer(x1.seq, x2.seq, function(x,y) input$beta0+input$beta1*x+input$beta2*y))
 
         #### Draw the plane with "plot_ly" and add points with "add_trace"
-        cols <- c("#f5cb11", "#b31d83")
+        cols <- c("#f512d1", "#5ef30a")
         cols <- cols[x3+1]
         library(plotly)
         plot_ly(x=~x1.seq, y=~x2.seq, z=~z,
-                colors = c("#f5cb11", "#b31d83"),type="surface") %>%
+                colors = c("#f512d1", "#5ef30a"),type="surface") %>%
             add_trace(data=df, x=as.vector(quasar$AB1450), y=as.vector(quasar$LINEFLUX), z=as.vector(quasar$RFEWIDTH), mode="markers", type="scatter3d",
                       marker = list(color=cols, opacity=0.7, symbol=105)) %>%
             layout(scene = list(aspectmode = "manual", aspectratio = list(x=1, y=1, z=1),
@@ -129,11 +129,11 @@ server <- function(input, output,session) {
         z <- t(outer(x1.seq, x2.seq, function(x,y) coeff[1]+coeff[2]*x+coeff[3]*y))
 
         #### Draw the plane with "plot_ly" and add points with "add_trace"
-        cols <- c("#f5cb11", "#b31d83")
+        cols <- c("#f512d1", "#5ef30a")
         cols <- cols[x3+1]
         library(plotly)
         plot_ly(x=~x1.seq, y=~x2.seq, z=~z,
-                colors = c("#f5cb11", "#b31d83"),type="surface") %>%
+                colors = c("#f512d1", "#5ef30a"),type="surface") %>%
             add_trace(data=df, x=as.vector(quasar$AB1450), y=as.vector(quasar$LINEFLUX), z=as.vector(quasar$RFEWIDTH), mode="markers", type="scatter3d",
                       marker = list(color=cols, opacity=0.7, symbol=105)) %>%
             layout(scene = list(aspectmode = "manual", aspectratio = list(x=1, y=1, z=1),

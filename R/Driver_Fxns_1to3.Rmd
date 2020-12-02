@@ -1,5 +1,5 @@
 ---
-title: "Driver for Functions 1 to 3"
+title: "Explanation of Functions"
 author: "Reza Niazi"
 date: "11/26/2020"
 output: html_document
@@ -14,15 +14,39 @@ vignette: >
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Introduction
+
+This document explains how the functions in the package are used. The first function gives plots and statistics to determine whether a given linear model satisfies the regression assumptions. The second, performs a bootstrap in order to calculate regression coefficients and confidence intervals and compares this to the classical version. The third function performs regression using Bayesian methods. Along with diagnostic plots to make sure that the MCMC process converges, it also compares the Bayesian approach to the classical one. The fourth, and final, function really just calls a Shiny web app. Since the RMD cannot fully knit while it also opens the app, another RMD file called Driver_Shiny was made in order to run this on your RMD. You can also just go to the app.R file in the inst/shiny directory and run it there as well, or simply type shinyddt() in the commandline. 
+
+Let's begin by looking at the dataset that we will use to demonstrate the functions. This is the QUASAR.xls file. In alL the functions, we use the model that 
+$$
+E[RFEWIDTH] = \beta_{0}+\beta_{1}LINEFLUX+\beta_{2}AB1450
+$$
 
 ```{r}
 library(readxl)
 source("ModelCheck.r")
 quasar = read_excel("QUASAR.XLS")
+quasar
+```
+
+# Function 1 (ModelCheck)
+
+This function produces residual vs fitted and QQ plots given a certain linear model (lm) object. This is done to make sure that the linear model 
+$$
+Y=X\beta + \epsilon
+$$
+satisfies the assumption that $\epsilon \overset{iid}{\sim} N(0,\sigma^{2}I)$. The residuals vs. fitted plot is used to determine whether the mean is $0$ and whether the variance is a constant. The first is done by seeing whether there are as many points above and below the horizontal line at $0$ units. The second is checked by seeing whether the datapoints in the scatterplot have a cloud-like shape as opposed to a bowed or megaphone shape. This shows that the variance is not influenced by the lower and upper values of the independent variables. 
+
+The QQ plot is used to check the normality condition by plotting the theoretical quantiles vs the fitted quantiles from data. The closer the data points lie to the image of the identity function, the stronger evidence that the errors are distrusted normally. Finally, the Shapiro-Wilk Statistic along with its p-value is presented as another check of normality. The NULL hypothesis of this test is that the errors are distributed normally. 
+```{r}
 model = lm(RFEWIDTH~LINEFLUX+AB1450,data=quasar)
 ModelCheck(model)
 ```
+
+# Function 2 (Bootstrap)
+
+This function performs a bootstrap to determine regression coefficients and their confidence intervals to compare to the standard projection matrix approach. It also produces histograms to show the distribution of the estimated coefficients over all the iterations. The function takes in 4 parameters: iter (number of iterations to perform), alpha (significance level for confidence intervals), X (the design matrix, including a column of 1 in the first column), and Y (the response vector). 
 
 ```{r}
 source("Bootstrap.r")
@@ -32,8 +56,30 @@ X= cbind(rep(1,nrow(quasar)),as.matrix(quasar[,cols]))
 Bootstrap(100000,.05,X,Y)
 ```
 
-```{r}
+# Function 3 (BayesRegress)
+
+This function performs a Bayesian Regression in order to calculate the regression coefficients of our model. Along with these point estimates, it produces posterior quantiles that emulate the confidence intervals of classical/frequentist regression. The function also produces the classical estiamtes and confidence intervals for comparison. Lastly, diagnostic plots like posterior densities and trace plots are shown to assess the efficacy of the regression. The parameters of the function are: formula(a formula such as y~x1+x2 that gives the desired model to be analyzed) and data(the data that our model will come from).  
+```{r message=FALSE}
 source("BayesRegress.r")
 formula = quasar$RFEWIDTH~quasar$LINEFLUX+quasar$AB1450
 BayesRegress(formula,quasar)
 ```
+
+# Function 4 (shinyddt)
+The last function, shinyddt() is just used to run a shiny app. It is not run here, as this will prevent the Rmd from knitting to an HTML with all the content that is desired. It would just run the app but never show the rest of the HTML document. It can be run in the ways mentioned in the introduction.
+
+The shiny app has a few components to it. At the top, there is a regression plane that can be adjusted by using the sliders. The sliders allow the coefficients in the model 
+$$
+E[RFEWIDTH] = \beta_{0}+\beta_{1}LINEFLUX+\beta_{2}AB1450 
+$$
+
+to be tuned in order to see how changing the parameters affects the fit of the regression plane. The second plot is still interactive, but the regression plane is the one where the parameters were found using classical regression. You can still do interesting things, as it is a plotly graph. 
+
+The last functional part of the app is that allows the user to select data,as a .xls file and with a specific format, from their local disk. If the file is formatted correctly, upon selection the app will produce a residual vs fitted and QQ plot to show whether the chosen model satisfies the regression assumptions. Likewise, the actual data frame is shown as a table, and then under that the regression coefficients of the model using classical regression are given as well. Therefore, the user can with a click determine the appropriate $\beta$ parameters of their model! 
+
+$\textbf{FORMATTING:}$ 
+The format of the .xls file must be the following for the above mentioned functionality to work properly. The column names do not matter, but their order does. This first column must be the response vector. The subsequent columns must be the terms in the model that are desired to be included, where a column of all 1's is needed first. 
+
+For example, if we want the model $E[y] = \beta_{0}+\beta_{1}x_{1}+\beta_{2}x_{2}+\beta_{3}x_{1}x_{2}$, the first column should be the response Y, the second should be the column of all 1's, followed by the column of $x_{1},x_{2}$ and $x_{1} \cdot x_{2}$ values, respectively. Effectively, the first column is the response, and the rest of the dataframe should be the design matrix. 
+
+$\textbf{SEE QUASAR_FORM.xls}$ file to see an example of the proper formatting. 
