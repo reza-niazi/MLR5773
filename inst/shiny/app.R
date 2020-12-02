@@ -149,7 +149,7 @@ server <- function(input, output,session) {
 
     output$betas <- renderTable({
         data <- data()
-        Y = as.matrix(data$Y)
+        Y = as.matrix(data[,1])
         X = as.matrix(data[,2:ncol(data)])
         betas = solve(t(X)%*%X)%*%t(X)%*%Y
 
@@ -157,7 +157,7 @@ server <- function(input, output,session) {
 
     output$qqplot <- renderPlot({
         data <- data()
-        Y = as.matrix(data$Y)
+        Y = as.matrix(data[,1])
         X = as.matrix(data[,2:ncol(data)])
         betas = solve(t(X)%*%X)%*%t(X)%*%Y
         errors = Y-X%*%betas
