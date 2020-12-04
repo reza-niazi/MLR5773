@@ -1,8 +1,12 @@
-#' Bootstrap to Determine Regression Coefficients
+#' @title Bootstrap for Multilinear Regression
+#'
+#' This function is used to determine regression coefficients and confidence intervals using the bootstrap method. The point and interval estimates are
+#' compared to the regular (non-bootstrap) methods. Also, histograms that show the distribution of each regression coefficient through the iterations
+#' is shown.
 #'
 #' @param iter the number of iterations to perform in bootstrap
 #' @param alpha the significance level for confidence intervals
-#' @param X the design matrix
+#' @param X the design matrix (must have a column of 1's as the first column)
 #' @param Y the response vector
 #'
 #' @return regression coefficients and histogram of regression coefficients vs iterations along with comparison to classical regression approach
